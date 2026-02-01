@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cooking Game Surprise!</title>
+  <style>
+    body {
+      font-family: 'Comic Sans MS', Arial, sans-serif;
+      background: linear-gradient(135deg, #ffecd2, #fcb69f);
+      height: 100vh;
+      margin: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden;
+      text-align: center;
+      position: relative;
+    }
+
+    /* Floating bubbles */
+    .bubble {
+      position: absolute;
+      background: rgba(255, 255, 255, 0.5);
+      border-radius: 50%;
+      pointer-events: none;
+      animation: floatBubble 6s linear infinite;
+    }
+
+    @keyframes floatBubble {
+      0% { transform: translateY(0px) scale(1); opacity: 1; }
+      100% { transform: translateY(-600px) scale(1.5); opacity: 0; }
+    }
+
+    /* Screens */
+    .screen { display: none; flex-direction: column; align-items: center; }
+    .active { display: flex; }
+
+    /* Card style for welcome/password */
+    .card {
+      background: rgba(255, 255, 255, 0.9);
+      padding: 40px 60px;
+      border-radius: 25px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+      animation: fadeIn 1s ease-in-out;
+    }
+
+    @keyframes fadeIn {
+      from { transform: scale(0.9); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+
+    h1 { color: #ff0044; font-size: 28px; text-shadow: 2px 2px #fff; margin-bottom: 30px; }
+    input { padding: 10px; font-size: 16px; border-radius: 10px; border: 1px solid #aaa; margin-bottom: 20px; width: 200px; text-align: center; }
+    button { padding: 15px 35px; font-size: 18px; border: none; border-radius: 15px; cursor: pointer; margin: 10px; box-shadow: 2px 2px 12px rgba(0,0,0,0.3); transition: transform 0.2s, background 0.3s; }
+    button:hover { transform: scale(1.1); background: #ff3366; color: white; }
+
+    #yes { background-color: #ff0044; color: white; }
+    #no { background-color: #555; color: white; position: absolute; }
+    .heart { position: absolute; font-size: 20px; color: pink; animation: floatUp 4s linear infinite; }
+
+    @keyframes floatUp { 0% { transform: translateY(0px) scale(1); opacity: 1; } 100% { transform: translateY(-600px) scale(1.5); opacity: 0; } }
+  </style>
+</head>
+<body>
+
+<!-- Step 1: Welcome -->
+<div id="welcomeScreen" class="screen active">
+  <div class="card">
+    <h1>Welcome to the Cooking Game, Babe! 🍳💖</h1>
+    <button id="goToPasswordBtn">Enter</button>
+  </div>
+</div>
+
+<!-- Step 2: Password -->
+<div id="passwordScreen" class="screen">
+  <div class="card">
+    <h1>Please enter the secret password to start:</h1>
+    <input type="password" id="passwordInput" placeholder="Enter password" />
+    <button id="checkPasswordBtn">Submit</button>
+  </div>
+</div>
+
+<!-- Step 3: Valentine Question -->
+<div id="gameScreen" class="screen">
+  <h1>Do you like to be my Valentine 2026? 💖</h1>
+  <button id="yes">Yes 😍</button>
+  <button id="no">No 🙈</button>
+  <div id="heartsContainer"></div>
+</div>
+
+<script>
+  // --- Floating bubbles effect ---
+  for(let i=0; i<20; i++){
+    const bubble = document.createElement('div');
+    bubble.className = 'bubble';
+    bubble.style.width = bubble.style.height = (10 + Math.random()*30) + 'px';
+    bubble.style.left = Math.random() * window.innerWidth + 'px';
+    bubble.style.bottom = Math.random() * window.innerHeight + 'px';
+    bubble.style.animationDuration = 4 + Math.random()*4 + 's';
+    document.body.appendChild(bubble);
+  }
+
+  // --- Screen navigation ---
+  const welcomeScreen = document.getElementById('welcomeScreen');
+  const passwordScreen = document.getElementById('passwordScreen');
+  const gameScreen = document.getElementById('gameScreen');
+
+  document.getElementById('goToPasswordBtn').addEventListener('click', () => {
+    welcomeScreen.classList.remove('active');
+    passwordScreen.classList.add('active');
+  });
+
+  // --- Password check ---
+  const correctPassword = "22";
+  document.getElementById('checkPasswordBtn').addEventListener('click', () => {
+    const input = document.getElementById('passwordInput').value;
+    if(input === correctPassword) {
+      passwordScreen.classList.remove('active');
+      gameScreen.classList.add('active');
+    } else {
+      alert("Wrong password! Try again.");
+    }
+  });
+
+  // --- NO BUTTON MOVEMENT ---
+  const noBtn = document.getElementById('no');
+
+  function moveNo() {
+    const btnWidth = noBtn.offsetWidth;
+    const btnHeight = noBtn.offsetHeight;
+
+    const x = Math.random() * (window.innerWidth - btnWidth);
+    const y = Math.random() * (window.innerHeight - btnHeight);
+
+    noBtn.style.left = x + 'px';
+    noBtn.style.top = y + 'px';
+  }
+
+  // Move when hovered, tapped, or clicked
+  noBtn.addEventListener('mouseover', moveNo);
+  noBtn.addEventListener('touchstart', moveNo);
+  noBtn.addEventListener('mousedown', moveNo);
+  noBtn.addEventListener('touchend', moveNo);
+
+  // --- YES BUTTON ALERT ---
+  document.getElementById('yes').addEventListener('click', () => {
+    alert("I LOVE YOU 💖🍰");
+  });
+
+  // --- HEARTS ANIMATION ---
+  const heartsContainer = document.getElementById('heartsContainer');
+  function createHeart() {
+    const heart = document.createElement('div');
+    heart.className = 'heart';
+    heart.style.left = Math.random() * window.innerWidth + 'px';
+    heart.style.fontSize = 15 + Math.random() * 30 + 'px';
+    heart.textContent = '❤️';
+    heartsContainer.appendChild(heart);
+    setTimeout(() => heartsContainer.removeChild(heart), 4000);
+  }
+  setInterval(createHeart, 500);
+</script>
+
+</body>
+</html>
